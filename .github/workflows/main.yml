@@ -35,6 +35,16 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: Check dist folder
+          run: |
+            if [ -d dist ]; then
+              echo "✅ dist folder exists"
+              ls -la dist/
+            else
+              echo "❌ dist folder NOT found"
+              exit 1
+            fi
+
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
