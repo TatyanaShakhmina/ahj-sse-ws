@@ -1,7 +1,5 @@
 node_modules
 dist
-package-lock.json
-
 # Build files
 /frontend/dist
 /frontend/build
