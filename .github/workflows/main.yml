@@ -33,17 +33,25 @@ jobs:
         run: npm ci
 
       - name: Build
-        run: npm run build
+        run: npm run build 2>&1
 
-      - name: Check dist folder
+      - name: Show build output
+        if: always()
         run: |
-            if [ -d dist ]; then
-              echo "✅ dist folder exists"
-              ls -la dist/
-            else
-              echo "❌ dist folder NOT found"
-              exit 1
-            fi
+          echo "=== Current working directory ==="
+          pwd
+          echo ""
+          echo "=== Contents of frontend directory ==="
+          ls -la
+          echo ""
+          echo "=== Checking for dist folder ==="
+          if [ -d dist ]; then
+            echo "✅ dist exists - contents:"
+            ls -la dist/
+          else
+            echo "❌ dist NOT found!"
+            exit 1
+          fi
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
