@@ -14,10 +14,6 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
-    defaults:
-      run:
-        working-directory: ./frontend
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -27,29 +23,25 @@ jobs:
         with:
           node-version: '18'
           cache: 'npm'
-          cache-dependency-path: ./frontend/package-lock.json
+          cache-dependency-path: frontend/package-lock.json
 
       - name: Install dependencies
+        working-directory: ./frontend
         run: npm ci
 
       - name: Build
-        run: npm run build 2>&1
+        working-directory: ./frontend
+        run: npm run build
 
-      - name: Show build output
-        if: always()
+      - name: Verify dist folder
         run: |
-          echo "=== Current working directory ==="
-          pwd
-          echo ""
-          echo "=== Contents of frontend directory ==="
-          ls -la
-          echo ""
-          echo "=== Checking for dist folder ==="
-          if [ -d dist ]; then
-            echo "✅ dist exists - contents:"
-            ls -la dist/
+          if [ -d frontend/dist ]; then
+            echo "✅ dist exists!"
+            ls -la frontend/dist/
           else
-            echo "❌ dist NOT found!"
+            echo "❌ ERROR: dist folder not found!"
+            echo "Contents of frontend:"
+            ls -la frontend/
             exit 1
           fi
 
@@ -59,7 +51,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./dist
+          path: frontend/dist
 
       - name: Deploy to GitHub Pages
         id: deployment
